@@ -1,4 +1,4 @@
-module SudokuSolver (solve, sudoku, isValid) where
+module SudokuSolver (solve, sudoku, prettyPrint) where
 import Data.List (group, (\\), sort)
 import Data.Maybe (fromMaybe)
 
@@ -26,47 +26,50 @@ correctSudoku = [5,3,4,6,7,8,9,1,2,
 
 row :: Int -> [Int] -> [Int]
 row y grid = foldl (\acc x -> (grid !! x):acc) [] [y*9 .. y*9+8]
-    where y' = y*9
 column :: Int -> [Int] -> [Int]
 column x grid = foldl (\acc n -> (grid !! n):acc) [] [x,x+9..80]
 box :: Int -> Int -> [Int] -> [Int]
 box x y grid = foldl (\acc n -> (grid !! n):acc) [] [x+y*9*3+y' | y' <- [0,9,18], x <- [x'..x'+2]]
     where x' = x*3
 
-isValid :: [Int] -> Bool
-isValid grid = and [isValidRow, isValidCol, isValidBox]
-    where isValidRow = isValidDiv row
-          isValidCol = isValidDiv column
-          isValidBox = and $ map (\(x,y) -> isValidList (box x y grid)) [(x,y) | x <- [0..2], y <- [0..2]]
---          isValidDiv f = and $ foldl (\acc x -> isValidList (f x grid):acc) [] [0..8]
-          isValidDiv f = and $ map (\x -> isValidList (f x grid)) [0..8]
-          isValidList = all (\x -> null $ drop 1 x) . group . sort . filter (/= 0) -- tail removes entries that are '0'
+isValid = all (\x -> length x <= 9) . group . sort . filter (/= 0)
         
 isComplete :: [Int] -> Bool        
 isComplete grid = null (filter (== 0) grid)
 
 solve :: Maybe [Int] -> Maybe [Int]
-solve grid' = foldl f Nothing [0..80]
-    where grid = fromMaybe [] grid' 
-          f acc x
-            | isValid grid = if isComplete grid then grid' else f' acc x
-            | otherwise    = acc
-          f' acc x 
-            | (grid !! x) == 0 = case guess x grid of 
-                Nothing -> acc
-                Just x -> Just x
+solve grid'
+    | isValid grid = if isComplete grid then grid' else f' fold
+    | otherwise    = Nothing
+    where fold = foldl f (-1,100000000,[1]) [0..80]
+          grid = fromMaybe [] grid'
+          f acc@(_,l,_) x
+            | (grid !! x) == 0 = if validl < l then (x,validl,valid'') else acc
             | otherwise        = acc
+            where valid'' = valid' x
+                  validl = length valid''
+          f' (x,l,valids) = case g x valids of
+            Nothing -> Nothing
+            Just x -> Just x
+          g x valids = guess x grid valids
+          valid' x = valid (rowN x) (colN x) (boxN x) grid
+          rowN x = getRowN x
+          colN x = x - (rowN x) * 9
+          boxN x = ((colN x) `div` 3, (rowN x) `div` 3)
 
-guess :: Int -> [Int] -> Maybe [Int]
-guess x grid
-    | length valid /= 0 = foldl f Nothing valid
+guess x grid valids
+    | not $ null valids = foldl f Nothing valids
     | otherwise         = Nothing
-    where valid = [1..9] \\ (row rowN grid ++ column colN grid ++ box (fst boxN) (snd boxN) grid) -- remove numbers already used in row/collumn/box
-          rowN = x `div` 9 -- e.g. 0/9=0 75/9=8
-          colN = x - (rowN * 9) -- e.g. 0-0=0 75-72=3
-          boxN = (colN `div` 3, rowN `div` 3)
-          before x = take x grid
-          after x = drop (x+1) grid
+    where before x = take x grid
+          after x  = drop (x+1) grid
           f acc y = case solve $ Just $ before x ++ [y] ++ after x of
             Nothing -> acc
             Just x -> Just x
+
+valid rowN columnN boxN grid = [1..9] \\ (row rowN grid ++ column columnN grid ++ box (fst boxN) (snd boxN) grid) -- remove numbers already used in row/column/box
+
+getRowN x = x `div` 9 -- e.g. 0/9=0 75/9=8
+getColN x = x - ((getRowN x) * 9) -- e.g. 0-0=0 75-72=3
+getBoxN x = ((getColN x) `div` 3, (getRowN x) `div` 3)
+
+prettyPrint grid = foldl (\acc x -> if (x+1)`mod`9 == 0 then acc ++ (show $ grid !! x)++"\n" else acc ++ (show $ grid !! x) ++ " ") "" [0..80]
