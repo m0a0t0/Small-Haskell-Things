@@ -1,0 +1,40 @@
+	Mon Feb 20 14:20 2012 Time and Allocation Profiling Report  (Final)
+
+	   main +RTS -p -RTS
+
+	total time  =        0.34 secs   (17 ticks @ 20 ms)
+	total alloc =  75,102,892 bytes  (excludes profiling overheads)
+
+COST CENTRE                    MODULE               %time %alloc
+
+isValid                        SudokuSolver          41.2   55.5
+box                            SudokuSolver          35.3   20.3
+row                            SudokuSolver          11.8   12.0
+column                         SudokuSolver          11.8   11.8
+
+
+                                                                                               individual    inherited
+COST CENTRE              MODULE                                               no.    entries  %time %alloc   %time %alloc
+
+MAIN                     MAIN                                                   1           0   0.0    0.0   100.0  100.0
+ CAF:main                :Main                                                248           1   0.0    0.0     0.0    0.0
+ CAF:main                Main                                                 247           1   0.0    0.0   100.0  100.0
+  main                   Main                                                 254           1   0.0    0.0   100.0  100.0
+   solve                 SudokuSolver                                         255          15   0.0    0.1   100.0  100.0
+    guess                SudokuSolver                                         262          14   0.0    0.1     0.0    0.2
+     box                 SudokuSolver                                         265          14   0.0    0.1     0.0    0.1
+     column              SudokuSolver                                         264          14   0.0    0.0     0.0    0.0
+     row                 SudokuSolver                                         263          14   0.0    0.0     0.0    0.0
+    isComplete           SudokuSolver                                         261         534   0.0    0.2     0.0    0.2
+    isValid              SudokuSolver                                         256         534  41.2   55.5   100.0   99.5
+     box                 SudokuSolver                                         260        4806  35.3   20.2    35.3   20.2
+     column              SudokuSolver                                         259        4806  11.8   11.8    11.8   11.8
+     row                 SudokuSolver                                         257        4806  11.8   12.0    11.8   12.0
+ CAF:$dShow1_r318        Main                                                 246           1   0.0    0.0     0.0    0.0
+ CAF:$dShow_r316         Main                                                 245           1   0.0    0.0     0.0    0.0
+ CAF                     GHC.Show                                             241           1   0.0    0.0     0.0    0.0
+ CAF                     GHC.IO.Handle.FD                                     181           2   0.0    0.0     0.0    0.0
+ CAF                     GHC.IO.Encoding.Iconv                                139           2   0.0    0.0     0.0    0.0
+ CAF                     GHC.Conc.Signal                                      136           1   0.0    0.0     0.0    0.0
+ CAF:sudoku              SudokuSolver                                         131           1   0.0    0.0     0.0    0.0
+  sudoku                 SudokuSolver                                         258           1   0.0    0.0     0.0    0.0
