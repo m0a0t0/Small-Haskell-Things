@@ -26,15 +26,17 @@ correctSudoku = [5,3,4,6,7,8,9,1,2,
 
 row :: Int -> [Int] -> [Int]
 row y grid = foldl (\acc x -> (grid !! x):acc) [] [y*9 .. y*9+8]
+
 column :: Int -> [Int] -> [Int]
 column x grid = foldl (\acc n -> (grid !! n):acc) [] [x,x+9..80]
+
 box :: Int -> Int -> [Int] -> [Int]
 box x y grid = foldl (\acc n -> (grid !! n):acc) [] [x+y*9*3+y' | y' <- [0,9,18], x <- [x'..x'+2]]
     where x' = x*3
 
 isValid = all (\x -> length x <= 9) . group . sort . filter (/= 0)
-        
-isComplete :: [Int] -> Bool        
+
+isComplete :: [Int] -> Bool
 isComplete grid = null (filter (== 0) grid)
 
 solve :: Maybe [Int] -> Maybe [Int]
@@ -44,7 +46,7 @@ solve grid'
     where fold = foldl f (-1,100000000,[1]) [0..80]
           grid = fromMaybe [] grid'
           f acc@(_,l,_) x
-            | (grid !! x) == 0 = if validl < l then (x,validl,valid'') else acc
+            | (grid !! x) == 0 = if validl < l then (x,validl,valid'') else acc -- if least possible solutions to cell
             | otherwise        = acc
             where valid'' = valid' x
                   validl = length valid''
