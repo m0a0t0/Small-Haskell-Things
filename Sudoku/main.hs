@@ -21,7 +21,7 @@ mSudoku = [0,0,0,0,4,0,0,0,9,
            0,0,1,0,2,9,0,0,0,
            2,0,4,7,0,3,9,5,0,
            6,0,0,0,0,0,2,7,0]
-main = do
+main =
 --    print "Hello, world"
     putStrLn . prettyPrint . fromMaybe [] . solve . Just $ mSudoku
 --    putStrLn . show . solve' . Just $ sudoku

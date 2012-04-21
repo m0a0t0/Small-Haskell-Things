@@ -26,6 +26,6 @@ uncipher xs dict = map (\x -> fromMaybe ' ' $ M.lookup x dict) xs
 
 wordFitsKey (x:xs) (y:ys) key
     | or [x  == y, and [x == ' ', y `notElem` (map snd $ M.assocs key)]] = wordFitsKey xs ys key
-    | otherwise                                            = False
+    | otherwise                                                          = False
 wordFitsKey [] [] _ = True
 
