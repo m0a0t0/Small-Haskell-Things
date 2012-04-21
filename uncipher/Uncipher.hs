@@ -22,10 +22,10 @@ breakCipher' (x:xs) dict key = foldl' f [] wordsThatFit
           f' [] [] key' = key'
 breakCipher' [] _ key = [key]
 
-uncipher xs dict = map (\x -> fromMaybe '?' $ M.lookup x dict) xs
+uncipher xs dict = map (\x -> fromMaybe ' ' $ M.lookup x dict) xs
 
 wordFitsKey (x:xs) (y:ys) key
-    | or [x  == y, and [x == '?', y `notElem` (map snd $ M.assocs key)]] = wordFitsKey xs ys key
+    | or [x  == y, and [x == ' ', y `notElem` (map snd $ M.assocs key)]] = wordFitsKey xs ys key
     | otherwise                                            = False
 wordFitsKey [] [] _ = True
 
